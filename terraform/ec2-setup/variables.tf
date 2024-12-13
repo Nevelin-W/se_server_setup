@@ -1,6 +1,5 @@
-variable "aws_region" {
+variable "region" {
   type        = string
-  default     = "eu-central-1"
   description = "AWS region"
 }
 
@@ -25,7 +24,25 @@ variable "subnet_id" {
   description = "Subnet ID for the instance"
 }
 
-variable "root_volume_size" {
-  description = "Size of the root volume (in GB)"
-  default     = 35
+variable "root_volume_type" {
+  type        = string
+  description = "value for the root volume type"
 }
+
+variable "root_volume_size" {
+  type        = number
+  description = "Size of the root volume (in GB)"
+}
+
+variable "ec2_name" {
+  type        = string
+  description = "value for the EC2 name"
+}
+
+variable "eni_name" {
+  type        = string
+  description = "value for the ENI name"
+}
+
+
+

@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region
+  region = var.region
 }
 
 # Define a network interface
@@ -8,7 +8,7 @@ resource "aws_network_interface" "space_engineers_eni" {
   security_groups = [aws_security_group.server_sg.id]
 
   tags = {
-    Name = "SpaceEngineersENI"
+    Name = var.eni_name
   }
 }
 
@@ -18,7 +18,7 @@ resource "aws_instance" "space_engineers" {
   key_name      = var.key_name
 
   tags = {
-    Name = "SpaceEngineersServer"
+    Name = var.eni_name
   }
 
   network_interface {
@@ -28,7 +28,7 @@ resource "aws_instance" "space_engineers" {
 
   root_block_device {
     volume_size = var.root_volume_size
-    volume_type = "gp2"
+    volume_type = var.root_volume_type
   }
 }
 
