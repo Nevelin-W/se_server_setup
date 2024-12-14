@@ -9,8 +9,8 @@
     - secrets.yml
 
   roles:
-    - role: se_server_config/0-update-vm-install-dependencies
-    - role: se_server_config/1-
+    - role: se_server_config/0-initial-setup
+    - role: se_server_config/1-SteamCMD-setup
     
     
 
