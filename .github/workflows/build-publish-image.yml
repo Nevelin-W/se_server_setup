@@ -1,4 +1,4 @@
-name: Build and Publish Ansible Image
+name: Build and Publish Flutter Image
 
 on:
   workflow_dispatch:
@@ -40,11 +40,11 @@ jobs:
     - name: Generate version tag with date
       id: generate_tag
       run: |
-        # Get the current time in HH:MM-dd-MM-yyyy format
-        DATE=$(date +'%H:%M-%d-%m-%Y')
+        # Get the current date in HH-MM-DD-MM-YYYY format
+        DATE=$(date +'%H-%M-%d-%m-%Y')
 
         # Combine the custom input tag with the date
-        VERSION_TAG="${{ github.event.inputs.custom_tag }}-${DATE}"
+        VERSION_TAG="${{ github.event.inputs.custom_tag }}_${DATE}"
 
         # Set the version tag as an environment variable
         echo "VERSION_TAG=${VERSION_TAG}" >> $GITHUB_ENV
