@@ -6,7 +6,7 @@ on:
       custom_tag:
         description: 'Enter a custom tag'
         required: true
-        default: 'my-tag'
+        default: '1.0.0'
 
 jobs:
   build:
