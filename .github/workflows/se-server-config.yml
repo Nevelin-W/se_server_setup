@@ -41,6 +41,7 @@ jobs:
 
     - name: Test
       run: |
+        cd $GITHUB_WORKSPACE/keys
         ls -l
     # - name: Run Ansible Playbook
     #   env:
