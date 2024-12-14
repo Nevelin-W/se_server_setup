@@ -43,15 +43,14 @@ jobs:
 
     - name: Setup SSH Key
       run: |
-        mkdir -p $GITHUB_WORKSPACE/keys
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/keys/se_server_ec2_key.pem
-        chmod 600 $GITHUB_WORKSPACE/keys/se_server_ec2_key.pem
+        mkdir -p $GITHUB_WORKSPACE/ansible
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
+        chmod 600 $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
 
     - name: Run Ansible Playbook
       run: |
         docker run --rm \
           -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
-          -v $GITHUB_WORKSPACE/keys:/workspace/keys \
           ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
           ansible-playbook \
           -i /workspace/ansible/inventory.yml \
