@@ -1,4 +1,4 @@
-name: Build and Publish Flutter Image
+name: Build and Publish Ansible Image
 
 on:
   workflow_dispatch:
