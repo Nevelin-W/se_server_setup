@@ -40,8 +40,8 @@ jobs:
     - name: Generate version tag with date
       id: generate_tag
       run: |
-        # Get the current date in YYYY-MM-DD format
-        DATE=$(date +'%Y-%m-%d')
+        # Get the current time in HH:MM-dd-MM-yyyy format
+        DATE=$(date +'%H:%M-%d-%m-%Y')
 
         # Combine the custom input tag with the date
         VERSION_TAG="${{ github.event.inputs.custom_tag }}-${DATE}"
