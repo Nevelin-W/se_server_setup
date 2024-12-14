@@ -1,1 +1,52 @@
+name: se-server-config
 
+on:
+  workflow_dispatch:
+    inputs:
+        ANSIBLE_IMAGE_VERSION:
+          description: 'Enter a custom tag'
+          required: true
+          default: '1.0.0_00-30-14-12-2024'
+          type: choice
+          options:
+            - 1.0.0_00-30-14-12-2024
+            - latest
+
+env:
+  ANSIBLE_IMAGE_VERSION: ${{ github.event.inputs.ANSIBLE_IMAGE_VERSION }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Pull Ansible Docker Image
+      run: docker pull ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
+
+    # - name: Setup SSH Key
+    #   run: |
+    #     mkdir -p /workspace/keys
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > /workspace/keys/server-key.pem
+    #     chmod 600 /workspace/keys/server-key.pem
+
+    # - name: Run Ansible Playbook
+    #   env:
+    #     EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+    #     ANSIBLE_PRIVATE_KEY: /workspace/keys/server-key.pem
+    #   run: |
+    #     docker run --rm \
+    #       -e ansible_private_key=/workspace/keys/server-key.pem \
+    #       -e ec2_public_ip=${{ secrets.EC2_PUBLIC_IP }} \
+    #       -v $(pwd)/ansible:/workspace/ansible \
+    #       -v /workspace/keys:/workspace/keys \
+    #       your-dockerhub-username/ansible-image:latest \
+    #       ansible-playbook -i /workspace/ansible/inventory.yml /workspace/ansible/playbook.yml
