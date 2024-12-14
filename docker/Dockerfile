@@ -4,7 +4,7 @@ FROM python:3.9-slim
 # Set the working directory
 WORKDIR /workspace
 
-# Install system dependencies
+# Install system dependencies and clean up afterward to reduce image size
 RUN apt-get update && apt-get install -y \
     sshpass \
     git \
@@ -13,15 +13,11 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     python3-pip \
     python3-apt \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Ansible
 RUN pip install --no-cache-dir ansible
 
-# Install dependencies for Ansible
-RUN apt-get update && apt-get install -y \
-    openssh-client \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set entrypoint
-CMD ["tail", "-f", "/dev/null"]
+# Set up a directory for ansible playbooks and configuration
+RUN mkdir -p /workspace/ansible
