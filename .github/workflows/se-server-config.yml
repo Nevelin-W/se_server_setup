@@ -32,11 +32,12 @@ jobs:
     - name: Pull Ansible Docker Image
       run: docker pull ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
 
-    # - name: Setup SSH Key
-    #   run: |
-    #     mkdir -p /workspace/keys
-    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > /workspace/keys/server-key.pem
-    #     chmod 600 /workspace/keys/server-key.pem
+    - name: Setup SSH Key
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/keys
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/keys/server-key.pem
+        chmod 600 $GITHUB_WORKSPACE/keys/server-key.pem
+
 
     - name: Test
       run: |
