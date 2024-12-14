@@ -35,16 +35,16 @@ jobs:
     - name: Setup SSH Key
       run: |
         mkdir -p $GITHUB_WORKSPACE/keys
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/keys/server-key.pem
-        chmod 600 $GITHUB_WORKSPACE/keys/server-key.pem
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/keys/se_server_ec2_key.pem
+        chmod 600 $GITHUB_WORKSPACE/keys/se_server_ec2_key.pem
 
     - name: Run Ansible Playbook
       env:
         EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
-        ANSIBLE_PRIVATE_KEY: /workspace/keys/server-key.pem
+        ANSIBLE_PRIVATE_KEY: $GITHUB_WORKSPACE/keys/se_server_ec2_key.pem
       run: |
         docker run --rm \
-          -e ansible_private_key=/workspace/keys/server-key.pem \
+          -e ansible_private_key=$GITHUB_WORKSPACE/keys/se_server_ec2_key.pem \
           -e ec2_public_ip=${{ secrets.EC2_PUBLIC_IP }} \
           -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
           -v /workspace/keys:/workspace/keys \
