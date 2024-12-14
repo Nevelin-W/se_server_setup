@@ -38,20 +38,22 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/keys/server-key.pem
         chmod 600 $GITHUB_WORKSPACE/keys/server-key.pem
 
-
-    - name: Test
+    - name: Run Ansible Playbook
+      env:
+        EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+        ANSIBLE_PRIVATE_KEY: /workspace/keys/server-key.pem
       run: |
-        cd $GITHUB_WORKSPACE/keys
-        ls -l
-    # - name: Run Ansible Playbook
-    #   env:
-    #     EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
-    #     ANSIBLE_PRIVATE_KEY: /workspace/keys/server-key.pem
+        docker run --rm \
+          -e ansible_private_key=/workspace/keys/server-key.pem \
+          -e ec2_public_ip=${{ secrets.EC2_PUBLIC_IP }} \
+          -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
+          -v /workspace/keys:/workspace/keys \
+          ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
+          ansible-playbook -i $GITHUB_WORKSPACE/ansible/inventory.yml $GITHUB_WORKSPACE/ansible/se-server-config.yml --check
+
+
+
+    # - name: Test
     #   run: |
-    #     docker run --rm \
-    #       -e ansible_private_key=/workspace/keys/server-key.pem \
-    #       -e ec2_public_ip=${{ secrets.EC2_PUBLIC_IP }} \
-    #       -v $(pwd)/ansible:/workspace/ansible \
-    #       -v /workspace/keys:/workspace/keys \
-    #       your-dockerhub-username/ansible-image:latest \
-    #       ansible-playbook -i /workspace/ansible/inventory.yml /workspace/ansible/playbook.yml
+    #     cd $GITHUB_WORKSPACE/keys
+    #     ls -l
