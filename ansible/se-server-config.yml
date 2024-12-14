@@ -1,0 +1,16 @@
+---
+- name: SE server configuration
+  become: True
+  hosts: all
+  vars_files:
+    # User defined variables
+    - vars.yml
+    # secrets
+    - secrets.yml
+
+  roles:
+    - role: se_server_config/0-update-vm-install-dependencies
+    - role: se_server_config/1-
+    
+    
+
