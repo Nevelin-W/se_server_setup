@@ -1,0 +1,15 @@
+- name: Update and upgrade the system
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install required dependencies
+  apt:
+    name:
+      - wine64
+      - wine32
+      - lib32gcc-s1
+      - curl
+      - wget
+      - unzip
+    state: present
