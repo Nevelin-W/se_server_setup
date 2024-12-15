@@ -1,7 +1,7 @@
 ---
 - name: SE server configuration
   become: True
-  hosts: all
+  hosts: se_server
   vars_files:
     # User defined variables
     - vars.yml
