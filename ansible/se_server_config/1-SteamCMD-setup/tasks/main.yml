@@ -14,3 +14,5 @@
     /workspace/steamcmd/steamcmd.sh +login {{ steam_username }} {{ steam_password }} +force_install_dir /workspace/spaceengineers +app_update 298740 validate +quit
   args:
     creates: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe"
+  register: steamcmd_output
+  failed_when: "'Error' in steamcmd_output.stdout"

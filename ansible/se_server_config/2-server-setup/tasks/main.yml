@@ -30,6 +30,11 @@
     enabled: yes
     state: started
 
+- name: Verify Space Engineers server service is running
+  command: systemctl is-active spaceengineers
+  register: service_status
+  failed_when: service_status.stdout.strip() != "active"
+
 - name: Configure logrotate for Space Engineers logs
   copy:
     content: |
