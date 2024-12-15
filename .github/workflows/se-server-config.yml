@@ -51,24 +51,24 @@ jobs:
       run: |
         echo "${{ env.EC2_PUBLIC_IP }}" >> $GITHUB_WORKSPACE/ansible/inventory/se_server
 
-    - name: test
-      run: |
-        ls -l
-        cd ansible
-        ls -l
-        cat se_server_ec2_key.pem
-        cd inventory
-        cat se_server
-
-    # - name: Run Ansible Playbook
+    # - name: test
     #   run: |
-    #     DRY_RUN_OPTION=""
-    #     if [ "${{ env.DRY_RUN }}" = "true" ]; then
-    #         DRY_RUN_OPTION="--check"
-    #     fi
-    #     docker run --rm \
-    #     -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
-    #     ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
-    #     ansible-playbook /workspace/ansible/se-server-config.yml -i /workspace/ansible/inventory/se_server $DRY_RUN_OPTION
+    #     ls -l
+    #     cd ansible
+    #     ls -l
+    #     cat se_server_ec2_key.pem
+    #     cd inventory
+    #     cat se_server
+
+    - name: Run Ansible Playbook
+      run: |
+        DRY_RUN_OPTION=""
+        if [ "${{ env.DRY_RUN }}" = "true" ]; then
+            DRY_RUN_OPTION="--check"
+        fi
+        docker run --rm \
+        -v /ansible \
+        ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
+        ansible-playbook se-server-config.yml -i inventory/se_server $DRY_RUN_OPTION
       
           
