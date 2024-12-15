@@ -19,6 +19,7 @@ on:
 
 env:
   EC2_NAME: SpaceEngineersServer
+  EC2_TYPE: ${{ github.event.inputs.ec2_type }}
   EC2_KEY_NAME: se_server_ec2_key
   ENI_NAME: SpaceEngineersENI
   ROOT_VOLUME_TYPE: gp2
