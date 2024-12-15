@@ -51,22 +51,21 @@ jobs:
       run: |
         echo "${{ env.EC2_PUBLIC_IP }}" >> $GITHUB_WORKSPACE/ansible/inventory/se_server
 
-    - name: Test SSH Connection
+    - name: Run Docker Container and Execute Ansible Playbook
       run: |
-        ssh -i $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem -o StrictHostKeyChecking=no ubuntu@${{ env.EC2_PUBLIC_IP }} "echo 'SSH Connection Successful'"
+        # Run the Docker container
+        docker run -d -it --name ansible-container \
+          -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
+          ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
 
-
-    - name: Run Ansible Playbook
-      run: |
-        DRY_RUN_OPTION=""
-        if [ "${{ env.DRY_RUN }}" = "true" ]; then
-            DRY_RUN_OPTION="--check"
+        # Set the dry-run flag for the playbook
+        DRY_RUN_FLAG=""
+        if [[ "${{ env.DRY_RUN }}" == "true" ]]; then
+          DRY_RUN_FLAG="--check"
         fi
-        cd ansible
-        docker run --rm \
-        -v $GITHUB_WORKSPACE/ansible:/ansible \
-        ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
-        ansible-playbook /ansible/se-server-config.yml -i /ansible/inventory/se_server --private-key=/ansible/se_server_ec2_key.pem $DRY_RUN_OPTION
 
-      
+        # Execute Ansible playbook inside the container after cd'ing to /workspace/ansible
+        docker exec ansible-container bash -c "cd /workspace/ansible && ansible-playbook se-server-config.yml -i inventory/se_server $DRY_RUN_FLAG"
+
+       
           
