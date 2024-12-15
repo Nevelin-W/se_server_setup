@@ -1,0 +1,31 @@
+- name: Create Space Engineers server config directory
+  file:
+    path: "/workspace/spaceengineers/DedicatedServer64"
+    state: directory
+    mode: '0755'
+
+- name: Copy SpaceEngineersDedicated.cfg
+  copy:
+    src: "/workspace/ansible/config/SpaceEngineersDedicated.cfg"
+    dest: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.cfg"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: Copy systemd service file for Space Engineers server
+  copy:
+    src: "/workspace/ansible/systemd/spaceengineers.service"
+    dest: "/etc/systemd/system/spaceengineers.service"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Reload systemd to recognize the new service
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Space Engineers server service
+  systemd:
+    name: spaceengineers
+    enabled: yes
+    state: started
