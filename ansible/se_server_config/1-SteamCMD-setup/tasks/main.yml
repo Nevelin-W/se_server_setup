@@ -1,0 +1,16 @@
+- name: Download SteamCMD
+  get_url:
+    url: https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+    dest: "/workspace/steamcmd/steamcmd_linux.tar.gz"
+
+- name: Extract SteamCMD
+  unarchive:
+    src: "/workspace/steamcmd/steamcmd_linux.tar.gz"
+    dest: "/workspace/steamcmd"
+    remote_src: yes
+
+- name: Install Space Engineers server using SteamCMD
+  shell: |
+    /workspace/steamcmd/steamcmd.sh +login anonymous +force_install_dir /workspace/spaceengineers +app_update 298740 validate +quit
+  args:
+    creates: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe"
