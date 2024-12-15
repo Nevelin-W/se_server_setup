@@ -10,7 +10,5 @@
 
   roles:
     - role: se_server_config/0-initial-setup
-    # - role: se_server_config/1-SteamCMD-setup
-    
-    
-
+    - role: se_server_config/1-server-setup
+    - role: se_server_config/2-SteamCMD-setup
