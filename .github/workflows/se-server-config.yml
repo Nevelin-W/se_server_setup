@@ -66,6 +66,7 @@ jobs:
         if [ "${{ env.DRY_RUN }}" = "true" ]; then
             DRY_RUN_OPTION="--check"
         fi
+        cd ansible
         docker run --rm \
         -v /ansible \
         ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
