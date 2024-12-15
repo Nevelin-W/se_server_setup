@@ -3,27 +3,42 @@
     update_cache: yes
     upgrade: dist
 
-- name: Add WineHQ repository for Debian
-  apt_repository:
-    repo: 'deb https://dl.winehq.org/wine-builds/debian/ $(lsb_release -cs) main'
+- name: Enable 32-bit architecture for Wine
+  apt:
+    name: dpkg
     state: present
 
-- name: Add WineHQ GPG key
-  apt_key:
-    url: 'https://dl.winehq.org/wine-builds/winehq.key'
-    state: present
+- name: Add i386 architecture to support 32-bit packages
+  command: dpkg --add-architecture i386
 
-- name: Update package cache after adding WineHQ repo
+- name: Create directory for WineHQ repository key
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download and add the WineHQ repository key
+  get_url:
+    url: https://dl.winehq.org/wine-builds/winehq.key
+    dest: /etc/apt/keyrings/winehq-archive.key
+    mode: '0644'
+
+- name: Add the WineHQ repository for Debian Bullseye
+  get_url:
+    url: https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
+    dest: /etc/apt/sources.list.d/winehq-bullseye.sources
+    mode: '0644'
+
+- name: Update package cache after adding WineHQ repository
   apt:
     update_cache: yes
 
-- name: Install required dependencies
+- name: Install Wine (Stable Branch) and required dependencies
   apt:
     name:
+      - winehq-stable
       - wine64
       - wine32
       - lib32gcc-s1
-      - curl
-      - wget
-      - unzip
     state: present
+    install_recommends: yes
