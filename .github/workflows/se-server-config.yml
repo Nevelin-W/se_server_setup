@@ -23,6 +23,7 @@ on:
 env:
   ANSIBLE_IMAGE_VERSION: ${{ github.event.inputs.ANSIBLE_IMAGE_VERSION }}
   DRY_RUN: ${{ github.event.inputs.DRY_RUN }}
+  EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}  
 
 jobs:
   deploy:
@@ -51,6 +52,7 @@ jobs:
       run: |
         docker run --rm \
           -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
+          -e EC2_PUBLIC_IP=${{ secrets.EC2_PUBLIC_IP }} \  # Pass EC2 IP here
           ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
           ansible-playbook \
           -i /workspace/ansible/inventory.yml \
