@@ -4,9 +4,9 @@
     state: directory
     mode: '0755'
 
-- name: Copy SpaceEngineersDedicated.cfg
-  copy:
-    src: "/workspace/ansible/config/SpaceEngineersDedicated.cfg"
+- name: Render SpaceEngineersDedicated.cfg with vars
+  template:
+    src: "templates/SpaceEngineersDedicated.cfg.j2"
     dest: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.cfg"
     owner: ubuntu
     group: ubuntu
@@ -14,7 +14,7 @@
 
 - name: Copy systemd service file for Space Engineers server
   copy:
-    src: "/workspace/ansible/systemd/spaceengineers.service"
+    src: "files/spaceengineers.service"
     dest: "/etc/systemd/system/spaceengineers.service"
     owner: root
     group: root
@@ -29,3 +29,19 @@
     name: spaceengineers
     enabled: yes
     state: started
+
+- name: Configure logrotate for Space Engineers logs
+  copy:
+    content: |
+      /workspace/spaceengineers/logs/*.log {
+        daily
+        missingok
+        rotate 14
+        compress
+        notifempty
+        create 0640 ubuntu ubuntu
+      }
+    dest: /etc/logrotate.d/spaceengineers
+    owner: root
+    group: root
+    mode: '0644'

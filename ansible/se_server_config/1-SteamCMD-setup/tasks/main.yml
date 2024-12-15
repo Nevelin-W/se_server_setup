@@ -11,6 +11,6 @@
 
 - name: Install Space Engineers server using SteamCMD
   shell: |
-    /workspace/steamcmd/steamcmd.sh +login anonymous +force_install_dir /workspace/spaceengineers +app_update 298740 validate +quit
+    /workspace/steamcmd/steamcmd.sh +login {{ steam_username }} {{ steam_password }} +force_install_dir /workspace/spaceengineers +app_update 298740 validate +quit
   args:
     creates: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe"

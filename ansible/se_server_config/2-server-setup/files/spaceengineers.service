@@ -1,0 +1,13 @@
+[Unit]
+Description=Space Engineers Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/wine /workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe
+WorkingDirectory=/workspace/spaceengineers
+User=ubuntu
+Restart=always
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
