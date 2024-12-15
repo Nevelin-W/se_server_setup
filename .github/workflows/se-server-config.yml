@@ -23,7 +23,9 @@ on:
 env:
   ANSIBLE_IMAGE_VERSION: ${{ github.event.inputs.ANSIBLE_IMAGE_VERSION }}
   DRY_RUN: ${{ github.event.inputs.DRY_RUN }}
-  EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}  
+  EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+  STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+  STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}  
 
 jobs:
   deploy:
@@ -65,7 +67,7 @@ jobs:
         fi
 
         # Execute Ansible playbook inside the container after cd'ing to /workspace/ansible
-        docker exec ansible-container bash -c "cd /workspace/ansible && ansible-playbook se-server-config.yml -i inventory/se_server $DRY_RUN_FLAG"
+        docker exec ansible-container bash -c "cd /workspace/ansible && ansible-playbook se-server-config.yml -i inventory/se_server -e 'steam_username=${{ env.STEAM_USERNAME }} steam_password=${{ env.STEAM_PASSWORD }}' $DRY_RUN_FLAG"
 
        
           
