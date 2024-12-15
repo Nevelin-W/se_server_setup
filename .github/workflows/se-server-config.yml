@@ -68,8 +68,9 @@ jobs:
         fi
         cd ansible
         docker run --rm \
-        -v /ansible \
+        -v $GITHUB_WORKSPACE/ansible:/ansible \
         ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
-        ansible-playbook se-server-config.yml -i inventory/se_server $DRY_RUN_OPTION
+        ansible-playbook /ansible/se-server-config.yml -i /ansible/inventory/se_server $DRY_RUN_OPTION
+
       
           
