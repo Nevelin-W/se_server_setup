@@ -56,17 +56,17 @@ jobs:
         ssh -i $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem -o StrictHostKeyChecking=no ubuntu@${{ env.EC2_PUBLIC_IP }} "echo 'SSH Connection Successful'"
 
 
-    # - name: Run Ansible Playbook
-    #   run: |
-    #     DRY_RUN_OPTION=""
-    #     if [ "${{ env.DRY_RUN }}" = "true" ]; then
-    #         DRY_RUN_OPTION="--check"
-    #     fi
-    #     cd ansible
-    #     docker run --rm \
-    #     -v $GITHUB_WORKSPACE/ansible:/ansible \
-    #     ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
-    #     ansible-playbook /ansible/se-server-config.yml -i /ansible/inventory/se_server $DRY_RUN_OPTION
+    - name: Run Ansible Playbook
+      run: |
+        DRY_RUN_OPTION=""
+        if [ "${{ env.DRY_RUN }}" = "true" ]; then
+            DRY_RUN_OPTION="--check"
+        fi
+        cd ansible
+        docker run --rm \
+        -v $GITHUB_WORKSPACE/ansible:/ansible \
+        ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
+        ansible-playbook /ansible/se-server-config.yml -i /ansible/inventory/se_server --private-key=/ansible/se_server_ec2_key.pem $DRY_RUN_OPTION
 
       
           
