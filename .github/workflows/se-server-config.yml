@@ -44,25 +44,30 @@ jobs:
 
     - name: Setup SSH Key
       run: |
-        mkdir -p $GITHUB_WORKSPACE/ansible
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
-        chmod 600 $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
+        chmod 400 $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
 
     - name: Update Inventory File with EC2_PUBLIC_IP
       run: |
-        echo "[se_server]" > $GITHUB_WORKSPACE/ansible/inventory/se_server
         echo "${{ env.EC2_PUBLIC_IP }}" >> $GITHUB_WORKSPACE/ansible/inventory/se_server
 
-
-    - name: Run Ansible Playbook
+    - name: test
       run: |
-        DRY_RUN_OPTION=""
-        if [ "${{ env.DRY_RUN }}" = "true" ]; then
-            DRY_RUN_OPTION="--check"
-        fi
-        docker run --rm \
-        -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
-        ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
-        ansible-playbook /workspace/ansible/se-server-config.yml -i /workspace/ansible/inventory/se_server $DRY_RUN_OPTION
+        ls -l
+        cd ansible
+        ls -l
+        cd inventory
+        cat se_server
+
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     DRY_RUN_OPTION=""
+    #     if [ "${{ env.DRY_RUN }}" = "true" ]; then
+    #         DRY_RUN_OPTION="--check"
+    #     fi
+    #     docker run --rm \
+    #     -v $GITHUB_WORKSPACE/ansible:/workspace/ansible \
+    #     ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }} \
+    #     ansible-playbook /workspace/ansible/se-server-config.yml -i /workspace/ansible/inventory/se_server $DRY_RUN_OPTION
       
           
