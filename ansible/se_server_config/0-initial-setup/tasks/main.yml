@@ -1,8 +1,21 @@
-###############################################################
 - name: Update and upgrade the system
   apt:
     update_cache: yes
     upgrade: dist
+
+- name: Add WineHQ repository for Debian
+  apt_repository:
+    repo: 'deb https://dl.winehq.org/wine-builds/debian/ $(lsb_release -cs) main'
+    state: present
+
+- name: Add WineHQ GPG key
+  apt_key:
+    url: 'https://dl.winehq.org/wine-builds/winehq.key'
+    state: present
+
+- name: Update package cache after adding WineHQ repo
+  apt:
+    update_cache: yes
 
 - name: Install required dependencies
   apt:
