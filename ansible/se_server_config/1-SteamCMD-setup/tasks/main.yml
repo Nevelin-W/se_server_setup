@@ -1,3 +1,9 @@
+- name: Create directory for SteamCMD
+  file:
+    path: "/workspace/steamcmd"
+    state: directory
+    mode: '0755'
+
 - name: Download SteamCMD
   get_url:
     url: https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
