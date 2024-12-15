@@ -1,4 +1,0 @@
-all:
-  hosts:
-    space_engineers_server:
-      ansible_host: "{{ ec2_public_ip }}"
