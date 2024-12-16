@@ -70,8 +70,7 @@
 - name: Pre-configure Wine prefix
   shell: winecfg
   args:
-  async: 1800  # Allow up to 1 hours for the task to complete
-  poll: 60     # Ansible will check the task every 60 seconds
+  
     creates: "/root/.wine/system.reg"
 
 - name: Configure Wine to use a virtual desktop
@@ -80,3 +79,5 @@
     echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run wine regedit
   args:
     creates: "/root/.wine/config"
+  async: 1800  
+  poll: 60    
