@@ -1,3 +1,6 @@
+---
+# Other tasks related to setting up the Space Engineers server
+
 - name: Create Space Engineers server config directory
   file:
     path: "/workspace/spaceengineers/DedicatedServer64"
@@ -30,6 +33,7 @@
     enabled: yes
     state: started
 
+# Other tasks (such as logs and logrotate)
 - name: Verify Space Engineers server service is running
   command: systemctl is-active spaceengineers
   register: service_status
