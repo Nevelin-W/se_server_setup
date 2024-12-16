@@ -40,5 +40,28 @@
       - wine64
       - wine32
       - lib32gcc-s1
+      - libmono-cil-dev  # Ensure Mono is installed
+      - lib32z1  # Needed for Wine (32-bit zlib support)
     state: present
     install_recommends: yes
+
+- name: Install Wine Mono
+  shell: |
+    wget https://dl.winehq.org/wine/wine-mono/wine-mono-7.10.msi -O /tmp/wine-mono.msi
+    wine msiexec /i /tmp/wine-mono.msi
+  args:
+    creates: "/root/.wine/drive_c/windows/mono"
+
+- name: Install Wine Gecko
+  shell: |
+    wget https://dl.winehq.org/wine/wine-gecko/wine-gecko-2.47-x86_64.msi -O /tmp/wine-gecko.msi
+    wine msiexec /i /tmp/wine-gecko.msi
+  args:
+    creates: "/root/.wine/drive_c/windows/gecko"
+
+- name: Configure Wine to use a virtual desktop
+  shell: |
+    winecfg -v
+    wine regedit <<< "[Software\\Wine\\X11 Driver]\n\"UseTakeFocus\"=\"N\""
+  args:
+    creates: "/root/.wine/config"
