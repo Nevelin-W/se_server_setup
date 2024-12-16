@@ -73,5 +73,5 @@
     echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run WINEARCH=win32 WINEPREFIX=/root/.wine wine regedit
   args:
     creates: "/root/.wine/config"
-    async: 1800
-    poll: 60
+  async: 1800
+  poll: 60
