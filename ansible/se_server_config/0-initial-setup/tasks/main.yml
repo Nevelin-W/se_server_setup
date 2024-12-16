@@ -33,47 +33,31 @@
   apt:
     update_cache: yes
 
-- name: Install Wine (Stable Branch) and required 32-bit dependencies
+- name: Install Wine (Stable Branch) and required dependencies
   apt:
     name:
       - winehq-stable
-      - wine32  # Ensure 32-bit Wine is installed
-      - lib32gcc-s1  # 32-bit GCC support
-      - lib32z1  # 32-bit zlib support
-      - libmono-cil-dev  # Mono for Wine
+      - wine64
+      - wine32
+      - lib32gcc-s1
+      - libmono-cil-dev  # Ensure Mono is installed
+      - lib32z1  # Needed for Wine (32-bit zlib support)
       - xvfb
       - x11-utils
       - xserver-xorg
     state: present
     install_recommends: yes
 
-- name: Install Wine Mono for 32-bit
+- name: Install Wine Mono
   shell: |
     wget https://dl.winehq.org/wine/wine-mono/9.4.0/wine-mono-9.4.0-x86.msi -O /tmp/wine-mono.msi
-    WINEARCH=win32 WINEPREFIX=/root/.wine wine msiexec /i /tmp/wine-mono.msi
+    wine msiexec /i /tmp/wine-mono.msi
   args:
     creates: "/root/.wine/drive_c/windows/mono"
 
-- name: Install Wine Gecko for 32-bit
+- name: Install Wine Gecko
   shell: |
     wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi -O /tmp/wine-gecko.msi
-    WINEARCH=win32 WINEPREFIX=/root/.wine wine msiexec /i /tmp/wine-gecko.msi
+    wine msiexec /i /tmp/wine-gecko.msi
   args:
     creates: "/root/.wine/drive_c/windows/gecko"
-
-- name: Pre-configure Wine prefix for 32-bit
-  shell: |
-    WINEARCH=win32 WINEPREFIX=/root/.wine winecfg
-  args:
-    creates: "/root/.wine/system.reg"
-
-- name: Configure Wine to use a virtual desktop (Optional)
-  shell: |
-    export WINEARCH=win32
-    export WINEPREFIX=/root/.wine
-    xvfb-run winecfg -v
-    echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run wine regedit
-  args:
-    creates: "/root/.wine/config"
-  async: 1800
-  poll: 60
