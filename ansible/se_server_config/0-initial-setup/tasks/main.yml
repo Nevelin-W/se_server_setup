@@ -52,16 +52,16 @@
   args:
     creates: "/root/.wine/drive_c/windows/mono"
 
-# - name: Install Wine Gecko
-#   shell: |
-#     wget https://dl.winehq.org/wine/wine-gecko/wine-gecko-2.47-x86_64.msi -O /tmp/wine-gecko.msi
-#     wine msiexec /i /tmp/wine-gecko.msi
-#   args:
-#     creates: "/root/.wine/drive_c/windows/gecko"
+- name: Install Wine Gecko
+  shell: |
+    wget https://dl.winehq.org/wine/wine-gecko/wine-gecko-2.47-x86_64.msi -O /tmp/wine-gecko.msi
+    wine msiexec /i /tmp/wine-gecko.msi
+  args:
+    creates: "/root/.wine/drive_c/windows/gecko"
 
-# - name: Configure Wine to use a virtual desktop
-#   shell: |
-#     winecfg -v
-#     wine regedit <<< "[Software\\Wine\\X11 Driver]\n\"UseTakeFocus\"=\"N\""
-#   args:
-#     creates: "/root/.wine/config"
+- name: Configure Wine to use a virtual desktop
+  shell: |
+    winecfg -v
+    wine regedit <<< "[Software\\Wine\\X11 Driver]\n\"UseTakeFocus\"=\"N\""
+  args:
+    creates: "/root/.wine/config"
