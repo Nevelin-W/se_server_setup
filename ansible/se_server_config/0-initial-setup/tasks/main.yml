@@ -54,7 +54,7 @@
 
 - name: Install Wine Gecko
   shell: |
-    wget https://dl.winehq.org/wine/wine-gecko/wine-gecko-2.47-x86_64.msi -O /tmp/wine-gecko.msi
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi -O /tmp/wine-gecko.msi
     wine msiexec /i /tmp/wine-gecko.msi
   args:
     creates: "/root/.wine/drive_c/windows/gecko"
