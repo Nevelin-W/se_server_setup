@@ -3,6 +3,10 @@ Description=Space Engineers Server
 After=network.target
 
 [Service]
+# Set environment variables for Wine
+Environment="WINEARCH=win32"
+Environment="WINEPREFIX=/root/.wine"
+
 ExecStartPre=/usr/bin/Xvfb :0 -screen 0 1024x768x16
 ExecStart=/usr/bin/wine /workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe
 WorkingDirectory=/workspace/spaceengineers
