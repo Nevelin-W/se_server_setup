@@ -59,9 +59,22 @@
   args:
     creates: "/root/.wine/drive_c/windows/gecko"
 
+- name: Install X11 and virtual framebuffer
+  apt:
+    name:
+      - xvfb
+      - x11-utils
+      - xserver-xorg
+    state: present
+
+- name: Pre-configure Wine prefix
+  shell: winecfg
+  args:
+    creates: "/root/.wine/system.reg"
+
 - name: Configure Wine to use a virtual desktop
   shell: |
-    winecfg -v
-    wine regedit <<< "[Software\\Wine\\X11 Driver]\n\"UseTakeFocus\"=\"N\""
+    xvfb-run winecfg -v
+    echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run wine regedit
   args:
     creates: "/root/.wine/config"
