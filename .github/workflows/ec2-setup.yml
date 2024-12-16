@@ -10,6 +10,7 @@ on:
         options:
           - plan
           - apply
+          - destroy  # Add destroy as an option
       ec2_type:
         description: 'Choose EC2 instance type'
         required: true
@@ -26,7 +27,6 @@ env:
   AWS_REGION: eu-central-1
   SUBNET_ID: ${{ secrets.SUBNET_ID }}
   TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-  
   
 jobs:
   terraform:
@@ -66,7 +66,8 @@ jobs:
         id: terraform
         run: terraform apply -auto-approve -var="ec2_name=${{ env.EC2_NAME }}" -var="region=${{ env.AWS_REGION }}" -var="eni_name=${{ env.ENI_NAME }}" -var="root_volume_type=${{ env.ROOT_VOLUME_TYPE }}" -var="root_volume_size=${{ env.ROOT_VOLUME_SIZE }}" -var="key_name=${{ env.EC2_KEY_NAME }}" -var="subnet_id=${{ secrets.SUBNET_ID }}" -var="instance_type=${{ env.EC2_TYPE }}"
         working-directory: ./terraform/ec2-setup
-  #           ${{ secrets.DOCKER_USERNAME }}/flutter-container:latest
-  #     - name: Execute Flutter build script
-  #       run: |
-  #         docker exec flutter-container sh /tmp/build.sh
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        run: terraform destroy -auto-approve -var="ec2_name=${{ env.EC2_NAME }}" -var="region=${{ env.AWS_REGION }}" -var="eni_name=${{ env.ENI_NAME }}" -var="root_volume_type=${{ env.ROOT_VOLUME_TYPE }}" -var="root_volume_size=${{ env.ROOT_VOLUME_SIZE }}" -var="key_name=${{ env.EC2_KEY_NAME }}" -var="subnet_id=${{ secrets.SUBNET_ID }}" -var="instance_type=${{ env.EC2_TYPE }}"
+        working-directory: ./terraform/ec2-setup
