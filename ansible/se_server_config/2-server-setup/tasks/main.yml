@@ -35,6 +35,14 @@
   register: service_status
   failed_when: service_status.stdout.strip() != "active"
 
+- name: Create logs directory for Space Engineers
+  file:
+    path: "/workspace/spaceengineers/logs"
+    state: directory
+    mode: '0755'
+    owner: ubuntu
+    group: ubuntu
+
 - name: Configure logrotate for Space Engineers logs
   copy:
     content: |
