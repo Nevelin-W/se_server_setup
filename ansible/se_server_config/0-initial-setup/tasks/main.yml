@@ -45,12 +45,18 @@
     state: present
     install_recommends: yes
 
-- name: Install Wine Mono
-  shell: |
-    wget https://dl.winehq.org/wine/wine-mono/wine-mono-9.4.0.msi -O /tmp/wine-mono.msi
-    wine msiexec /i /tmp/wine-mono.msi
-  args:
-    creates: "/root/.wine/drive_c/windows/mono"
+
+- name: Install Wine Mono from APT
+  apt:
+    name: wine-mono
+    state: present
+
+# - name: Install Wine Mono
+#   shell: |
+#     wget https://dl.winehq.org/wine/wine-mono/wine-mono-9.4.0.msi -O /tmp/wine-mono.msi
+#     wine msiexec /i /tmp/wine-mono.msi
+#   args:
+#     creates: "/root/.wine/drive_c/windows/mono"
 
 - name: Install Wine Gecko
   shell: |
