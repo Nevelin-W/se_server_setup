@@ -69,8 +69,10 @@
 
 - name: Configure Wine to use a virtual desktop (Optional)
   shell: |
-    xvfb-run WINEARCH=win32 WINEPREFIX=/root/.wine winecfg -v
-    echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run WINEARCH=win32 WINEPREFIX=/root/.wine wine regedit
+    export WINEARCH=win32
+    export WINEPREFIX=/root/.wine
+    xvfb-run winecfg -v
+    echo -e "[Software\\Wine\\X11 Driver]\\n\"UseTakeFocus\"=\"N\"" | xvfb-run wine regedit
   args:
     creates: "/root/.wine/config"
   async: 1800
