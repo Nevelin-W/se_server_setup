@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ANSIBLE_IMAGE_VERSION:
-        description: 'Enter a custom tag'
+        description: 'Enter a ansible image version'
         required: true
         default: '1.0.0_15-14-15-12-2024'
         type: choice
