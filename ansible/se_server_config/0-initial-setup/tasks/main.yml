@@ -37,7 +37,6 @@
   apt:
     name:
       - winehq-stable
-      - wine64
       - wine32
       - lib32gcc-s1
       - libmono-cil-dev  # Ensure Mono is installed
