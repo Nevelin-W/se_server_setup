@@ -3,6 +3,7 @@ Description=Space Engineers Server
 After=network.target
 
 [Service]
+ExecStartPre=/usr/bin/Xvfb :0 -screen 0 1024x768x16
 ExecStart=/usr/bin/wine /workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.exe
 WorkingDirectory=/workspace/spaceengineers
 User=ubuntu
