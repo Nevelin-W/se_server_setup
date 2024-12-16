@@ -47,7 +47,7 @@
 
 - name: Install Wine Mono
   shell: |
-    wget https://dl.winehq.org/wine/wine-mono/wine-mono-7.10.msi -O /tmp/wine-mono.msi
+    wget https://dl.winehq.org/wine/wine-mono/wine-mono-9.4.0.msi -O /tmp/wine-mono.msi
     wine msiexec /i /tmp/wine-mono.msi
   args:
     creates: "/root/.wine/drive_c/windows/mono"
