@@ -1,61 +1,43 @@
-- name: Create Space Engineers server config directory
-  file:
-    path: "/workspace/spaceengineers/DedicatedServer64"
-    state: directory
-    mode: '0755'
+- name: Install Space Engineers Dedicated Server via SteamCMD
+  command: /usr/games/steamcmd +force_install_dir {{ game_dir }} +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit
 
-- name: Render SpaceEngineersDedicated.cfg with vars
-  template:
-    src: "templates/SpaceEngineersDedicated.cfg.j2"
-    dest: "/workspace/spaceengineers/DedicatedServer64/SpaceEngineersDedicated.cfg"
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+- name: Configure Space Engineers Dedicated Server
+  block:
 
-- name: Copy systemd service file for Space Engineers server
-  copy:
-    src: "files/spaceengineers.service"
-    dest: "/etc/systemd/system/spaceengineers.service"
-    owner: root
-    group: root
-    mode: '0644'
+    - name: Update IP address in configuration
+      lineinfile:
+        path: "{{ instances_dir }}/{{ instance_name }}/SpaceEngineers-Dedicated.cfg"
+        regexp: '<IP>.*</IP>'
+        line: "<IP>{{ ansible_default_ipv4.address }}</IP>"
 
-- name: Reload systemd to recognize the new service
-  systemd:
-    daemon_reload: yes
+    - name: Update world save path in configuration
+      lineinfile:
+        path: "{{ instances_dir }}/{{ instance_name }}/SpaceEngineers-Dedicated.cfg"
+        regexp: '<LoadWorld.*LoadWorld>'
+        line: "<LoadWorld>Z:\\\appdata\\space-engineers\\instances\\{{ instance_name }}\\Saves\\{{ world_name }}</LoadWorld>"
 
-- name: Enable and start Space Engineers server service
-  systemd:
-    name: spaceengineers
-    enabled: yes
-    state: started
+    - name: Update plugins in configuration
+      block:
+        - name: Count plugins
+          find:
+            paths: "{{ plugin_dir }}"
+            patterns: "*.dll"
+          register: plugin_list
 
-# Other tasks (such as logs and logrotate)
-- name: Verify Space Engineers server service is running
-  command: systemctl is-active spaceengineers
-  register: service_status
-  failed_when: service_status.stdout.strip() != "active"
+        - name: Add plugins to configuration
+          lineinfile:
+            path: "{{ instances_dir }}/{{ instance_name }}/SpaceEngineers-Dedicated.cfg"
+            regexp: '<Plugins.*Plugins>'
+            line: "<Plugins>{{ plugin_list.files | map('basename') | join(', ') }}</Plugins>"
 
-- name: Create logs directory for Space Engineers
-  file:
-    path: "/workspace/spaceengineers/logs"
-    state: directory
-    mode: '0755'
-    owner: ubuntu
-    group: ubuntu
+- name: Start Space Engineers Dedicated Server
+  command: |
+    wine SpaceEngineersDedicated.exe -noconsole -ignorelastsession -path Z:\appdata\space-engineers\instances\{{ instance_name }}
+  args:
+    chdir: "{{ game_dir }}/DedicatedServer64"
 
-- name: Configure logrotate for Space Engineers logs
-  copy:
-    content: |
-      /workspace/spaceengineers/logs/*.log {
-        daily
-        missingok
-        rotate 14
-        compress
-        notifempty
-        create 0640 ubuntu ubuntu
-      }
-    dest: /etc/logrotate.d/spaceengineers
-    owner: root
-    group: root
-    mode: '0644'
+- name: Health Check
+  uri:
+    url: "https://api.steampowered.com/ISteamApps/GetServersAtAddress/v1?addr={{ ansible_default_ipv4.address }}"
+    method: GET
+    status_code: 200
