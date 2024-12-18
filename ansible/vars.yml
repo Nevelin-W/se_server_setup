@@ -1,12 +1,17 @@
+wine_arch: "win64"
+wine_prefix: "/root/server"
+instance_name: "SE"
+game_dir: "/appdata/space-engineers/SpaceEngineersDedicated"
+instances_dir: "/appdata/space-engineers/instances"
+plugin_dir: "/appdata/space-engineers/plugins"
 
-
-# se_server
-server_name: MyDumpsterFireServer
-server_description: Welcome to the DumpsterFire!
-max_players: 4
-server_port: 27016
-world_name: MyWorld
-world_size: 8
-mod_ids: "484504816"
-game_mode: Survival
-pve: true
+# # se_server
+# server_name: MyDumpsterFireServer
+# server_description: Welcome to the DumpsterFire!
+# max_players: 4
+# server_port: 27016
+# world_name: MyWorld
+# world_size: 8
+# mod_ids: "484504816"
+# game_mode: Survival
+# pve: true
