@@ -1,0 +1,53 @@
+  - name: Add i386 architecture for Wine
+    command: dpkg --add-architecture i386
+    register: add_arch
+    changed_when: add_arch.rc == 0
+
+  - name: Add Wine repository key
+    get_url:
+      url: https://dl.winehq.org/wine-builds/winehq.key
+      dest: /etc/apt/keyrings/winehq.key
+
+  - name: Add Wine repository
+    copy:
+      dest: /etc/apt/sources.list.d/winehq-bookworm.sources
+      content: |
+        deb http://ftp.us.debian.org/debian bookworm main non-free
+        deb https://dl.winehq.org/wine-builds/debian/ bookworm main
+
+  - name: Update package list for Wine
+    apt:
+      update_cache: yes
+
+  - name: Install Wine
+    apt:
+      name:
+        - winehq-stable
+        - wine-stable-i386
+        - wine-stable-amd64
+      state: present
+
+  - name: Initialize Wine prefix
+    command: |
+      wineboot --init
+      environment:
+        WINEARCH: "{{ wine_arch }}"
+        WINEPREFIX: "{{ wine_prefix }}"
+
+  - name: Install corefonts using Winetricks
+    command: winetricks corefonts
+    environment:
+      WINEARCH: "{{ wine_arch }}"
+      WINEPREFIX: "{{ wine_prefix }}"
+
+  - name: Install vcrun2019 using Winetricks
+    command: DISPLAY=:5.0 winetricks -q vcrun2019
+    environment:
+      WINEARCH: "{{ wine_arch }}"
+      WINEPREFIX: "{{ wine_prefix }}"
+
+  - name: Install dotnet48 using Winetricks
+    command: DISPLAY=:5.0 winetricks -q --force dotnet48
+    environment:
+      WINEARCH: "{{ wine_arch }}"
+      WINEPREFIX: "{{ wine_prefix }}"
