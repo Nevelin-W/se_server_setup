@@ -1,0 +1,16 @@
+- name: Update and upgrade system packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install necessary dependencies
+  apt:
+    name:
+      - software-properties-common
+      - curl
+      - wget
+      - gnupg2
+      - xvfb
+      - cabextract
+      - steamcmd
+    state: present
