@@ -87,3 +87,5 @@
 
 - name: Download DpaceEngeneers dedicated server app
   shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
+  async: 600
+  poll: 0
