@@ -1,155 +1,86 @@
 - name: Set environment variable for non-interactive apt
-  lineinfile:
-    path: /etc/environment
-    line: "DEBIAN_FRONTEND={{ debian_frontend }}"
-    create: yes
+  shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
 
 - name: Add i386 architecture
-    command: dpkg --add-architecture i386
-    become: yes
+  shell: "dpkg --add-architecture i386"
+
 
 - name: Update apt repositories
-  apt:
-    update_cache: yes
-    upgrade: yes
-    cache_valid_time: 3600
+  shell: "apt-get -qq -y update && apt-get upgrade -y -qq"
 
 - name: Install required packages
-  apt:
-    name: "{{ item }}"
-    state: present
-    install_recommends: yes
-  loop:
-    - software-properties-common
-    - curl
-    - gnupg2
-    - wget
-    - unrar-free
-    - fontconfig
-    - libfaudio0:i386
-    - steamcmd
-    - xvfb
-    - cabextract
+  shell: |
+    apt-get install -y -qq software-properties-common curl gnupg2 wget
+    apt-get install -y -qq unrar-free
 
-- name: Create directories for Space Engineers server
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-  with_items:
-    - "{{ plugin_dir }}"
-    - "{{ instance_dir }}"
-    - "{{ instance_home_dir }}"
-    - "{{ game_dir }}"
-    - "{{ steamcmd_dir }}"
 
 - name: Download Space Engineers server files
-  get_url:
-    url: "https://setestbucket123.s3.amazonaws.com/SE_TEST.rar"
-    dest: "/tmp/SE_TEST.rar"
+  shell: "wget https://setestbucket123.s3.amazonaws.com/SE_TEST.rar -O /tmp/SE_TEST.rar"
 
 - name: Extract SE_TEST.rar
-  unarchive:
-    src: "/tmp/SE_TEST.rar"
-    dest: "{{ instance_home_dir }}"
-    remote_src: yes
+  shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
 
-- name: Download winehq key
-  get_url:
-    url: "https://dl.winehq.org/wine-builds/winehq.key"
-    dest: "/etc/apt/keyrings/winehq-archive.key"
+- name: Create directories for Space Engineers server
+  shell: |
+    mkdir -p /appdata/space-engineers/plugins
+    mkdir -p /appdata/space-engineers/instances
+    mkdir -p /appdata/space-engineers/instances/SE_TEST
+    mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
+    mkdir -p /appdata/space-engineers/steamcmd
+
+
+- name: Set up WineHQ keyring
+  shell: |
+    mkdir -pm755 /etc/apt/keyrings
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+
 
 - name: Add WineHQ source list
-  copy:
-    content: "deb http://ftp.us.debian.org/debian bookworm main non-free"
-    dest: "/etc/apt/sources.list.d/non-free.list"
+  shell: |
+    echo "deb http://ftp.us.debian.org/debian bookworm main non-free" > /etc/apt/sources.list.d/non-free.list
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 
-- name: Add WineHQ Bookworm source
-  get_url:
-    url: "https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources"
-    dest: "/etc/apt/sources.list.d/winehq-bookworm.sources"
 
 - name: Update apt repositories after adding WineHQ sources
-  apt:
-    update_cache: yes
-    cache_valid_time: 3600
+  shell: "apt-get update -qq"
+
 
 - name: Accept Steam terms
-  debconf:
-    name: steam
-    question: "steam/question"
-    value: "I AGREE"
-    vtype: select
+  shell: "echo steam steam/question select 'I AGREE' | debconf-set-selections"
 
 - name: Accept Steam license
-  debconf:
-    name: steam
-    question: "steam/license"
-    value: ""
-    vtype: note
+  shell: "echo steam steam/license note '' | debconf-set-selections"
 
 - name: Install Wine and Steam dependencies
-  apt:
-    name: "{{ item }}"
-    state: present
-    install_recommends: yes
-  loop:
-    - winehq-{{ wine_branch }}={{ wine_version }}
-    - wine-{{ wine_branch }}-i386={{ wine_version }}
-    - wine-{{ wine_branch }}-amd64={{ wine_version }}
-    - wine-{{ wine_branch }}={{ wine_version }}
-    - libfaudio0:i386
+  shell: |
+    apt-get install -qq -y libfaudio0:i386 libfaudio0
+    apt-get install -y fontconfig
+    apt-get install -qq -y --install-recommends \
+      winehq-stable=9.0.0.0~bookworm-1 \
+      wine-stable-i386=9.0.0.0~bookworm-1 \
+      wine-stable-amd64=9.0.0.0~bookworm-1 \
+      wine-stable=9.0.0.0~bookworm-1 \
+      steamcmd \
+      xvfb \
+      cabextract
+
 
 - name: Download winetricks script
-  get_url:
-    url: "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks"
-    dest: "/usr/local/bin/winetricks"
+  shell: "curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks"
+
 
 - name: Set the correct permissions for winetricks
-  file:
-    path: "/usr/local/bin/winetricks"
-    mode: '0755'
+  shell: "chmod +x /usr/local/bin/winetricks"
+
 
 - name: Run Wine setup and configure for Space Engineers
-  command: >
-    bash -c "
-      Xvfb :5 -screen 0 1024x768x16 & 
-      sleep 10 && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} WINEDLLOVERRIDES='mscoree=d' wineboot --init /nogui && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winecfg /v win10 && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winetricks corefonts && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winetricks sound=disabled && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} DISPLAY=:5.0 winetricks -q vcrun2019 && 
-      env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} DISPLAY=:5.0 winetricks -q --force dotnet48
-    "
-  async: 600  # Run for 10 minutes
+  shell: |
+    Xvfb :5 -screen 0 1024x768x16 &
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
+  async: 600
   poll: 0
-
-# - name: Run wineboot for initial setup
-#   command: >
-#     Xvfb :5 -screen 0 1024x768x16 &
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
-#   async: 
-#   poll: 0
-
-# - name: Configure Wine for Space Engineers
-#   command: >
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winecfg /v win10
-#   async: 60
-#   poll: 0
-
-# - name: Install core fonts using winetricks
-#   command: >
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winetricks corefonts
-
-# - name: Disable sound with winetricks
-#   command: >
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} winetricks sound=disabled
-
-# - name: Install vcrun2019 with winetricks
-#   command: >
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} DISPLAY=:5.0 winetricks -q vcrun2019
-
-# - name: Install dotnet48 with winetricks
-#   command: >
-#     env WINEARCH={{ wine_arch }} WINEDEBUG={{ wine_debug }} WINEPREFIX={{ wine_prefix }} DISPLAY=:5.0 winetricks -q --force dotnet48
