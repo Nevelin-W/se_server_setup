@@ -47,6 +47,7 @@ jobs:
         path: ~/.cache/docker
         key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}-${{ github.sha }}
         restore-keys: |
+          ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}-
           ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-
         enableCrossOsArchive: false
         fail-on-cache-miss: false
