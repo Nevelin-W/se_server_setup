@@ -103,11 +103,15 @@
     - wine-{{ wine_branch }}={{ wine_version }}
     - libfaudio0:i386
 
-- name: Download and install winetricks
+- name: Download winetricks script
   get_url:
     url: "https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks"
     dest: "/usr/local/bin/winetricks"
-  mode: '0755'
+
+- name: Set the correct permissions for winetricks
+  file:
+    path: "/usr/local/bin/winetricks"
+    mode: '0755'
 
 - name: Run Wine setup and configure for Space Engineers
   command: >
