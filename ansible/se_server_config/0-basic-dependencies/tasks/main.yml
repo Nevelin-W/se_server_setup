@@ -89,3 +89,13 @@
   shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
   async: 600
   poll: 0
+
+- name: Move content from downloading to SpaceEngineersDedicated
+  shell: |
+    mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/
+  when: ansible_facts['ansible_pid'] is defined
+
+- name: Remove all other files from SpaceEngineersDedicated except for the desired content
+  shell: |
+    find /appdata/space-engineers/SpaceEngineersDedicated/ -mindepth 1 ! -path "/appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740" -exec rm -rf {} +
+  when: ansible_facts['ansible_pid'] is defined
