@@ -41,6 +41,14 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Cache Docker Image
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/docker
+        key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}
+        restore-keys: |
+          ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-
+
     - name: Pull Ansible Docker Image
       run: docker pull ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
 
