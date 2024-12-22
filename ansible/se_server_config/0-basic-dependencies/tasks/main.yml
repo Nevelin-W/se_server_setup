@@ -1,6 +1,14 @@
 - name: Set environment variable for non-interactive apt
   shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
 
+- name: Create directories for Space Engineers server
+  shell: |
+    mkdir -p /appdata/space-engineers/plugins
+    mkdir -p /appdata/space-engineers/instances
+    mkdir -p /appdata/space-engineers/instances/SE_TEST
+    mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
+    mkdir -p /appdata/space-engineers/steamcmd
+
 - name: Add i386 architecture
   shell: "dpkg --add-architecture i386"
 
@@ -19,14 +27,6 @@
 
 - name: Extract SE_TEST.rar
   shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
-
-- name: Create directories for Space Engineers server
-  shell: |
-    mkdir -p /appdata/space-engineers/plugins
-    mkdir -p /appdata/space-engineers/instances
-    mkdir -p /appdata/space-engineers/instances/SE_TEST
-    mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
-    mkdir -p /appdata/space-engineers/steamcmd
 
 
 - name: Set up WineHQ keyring
