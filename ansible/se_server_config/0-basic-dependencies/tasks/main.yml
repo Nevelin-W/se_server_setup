@@ -5,11 +5,8 @@
     create: yes
 
 - name: Add i386 architecture
-  apt:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - i386
+    command: dpkg --add-architecture i386
+    become: yes
 
 - name: Update apt repositories
   apt:
