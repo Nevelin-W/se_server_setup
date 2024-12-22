@@ -1,9 +1,26 @@
-wine_arch: "win64"
-wine_prefix: "/root/server"
-instance_name: "SE"
-game_dir: "/appdata/space-engineers/SpaceEngineersDedicated"
-instances_dir: "/appdata/space-engineers/instances"
-plugin_dir: "/appdata/space-engineers/plugins"
+# wine
+wine_branch: 'stable'
+wine_version: '9.0.0.0~bookworm-1'
+wine_arch: 'win64'
+wine_debug: '-all'
+wine_prefix: '/root/server'
+apt_key_dont_warn_on_dangerous_usage: '1'
+
+# debian
+debian_frontend: 'noninteractive'
+
+# instance
+instance_name: 'SE_TEST'
+
+# paths
+home_dir: '/appdata/space-engineers'
+plugin_dir: '{{ home_dir }}/plugins'
+instance_dir: '{{ home_dir }}/instances'
+instance_home_dir: '{{ instance_dir }}/{{instance_name}}'
+game_dir: '{{ home_dir }}/SpaceEngineersDedicated'
+steamcmd_dir: '{{ home_dir }}/steamcmd'
+
+
 
 # # se_server
 # server_name: MyDumpsterFireServer
