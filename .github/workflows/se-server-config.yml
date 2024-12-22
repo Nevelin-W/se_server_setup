@@ -45,10 +45,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/docker
-        key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}-${{ github.sha }}
+        key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}
         restore-keys: |
-          ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}-
-          ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-
+          ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}
         enableCrossOsArchive: false
         fail-on-cache-miss: false
         lookup-only: false
