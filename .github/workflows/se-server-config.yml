@@ -45,10 +45,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/docker
-        key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}
+        key: ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-${{ env.ANSIBLE_IMAGE_VERSION }}-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-${{ secrets.DOCKER_USERNAME }}/ansible-container-
-
+        enableCrossOsArchive: false
+        fail-on-cache-miss: false
+        lookup-only: false
+    
     - name: Pull Ansible Docker Image
       run: docker pull ${{ secrets.DOCKER_USERNAME }}/ansible-container:${{ env.ANSIBLE_IMAGE_VERSION }}
 
