@@ -1,91 +1,91 @@
-- name: Set environment variable for non-interactive apt
-  shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
+# - name: Set environment variable for non-interactive apt
+#   shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
 
-- name: Create directories for Space Engineers server
-  shell: |
-    mkdir -p /appdata/space-engineers/plugins
-    mkdir -p /appdata/space-engineers/instances
-    mkdir -p /appdata/space-engineers/instances/SE_TEST
-    mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
-    mkdir -p /appdata/space-engineers/steamcmd
+# - name: Create directories for Space Engineers server
+#   shell: |
+#     mkdir -p /appdata/space-engineers/plugins
+#     mkdir -p /appdata/space-engineers/instances
+#     mkdir -p /appdata/space-engineers/instances/SE_TEST
+#     mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
+#     mkdir -p /appdata/space-engineers/steamcmd
 
-- name: Add i386 architecture
-  shell: "dpkg --add-architecture i386"
-
-
-- name: Update apt repositories
-  shell: "apt-get -qq -y update && apt-get upgrade -y -qq"
-
-- name: Install required packages
-  shell: |
-    apt-get install -y -qq software-properties-common curl gnupg2 wget
-    apt-get install -y -qq unrar-free
+# - name: Add i386 architecture
+#   shell: "dpkg --add-architecture i386"
 
 
-- name: Download Space Engineers server files
-  shell: "wget https://setestbucket123.s3.amazonaws.com/SE_TEST.rar -O /tmp/SE_TEST.rar"
+# - name: Update apt repositories
+#   shell: "apt-get -qq -y update && apt-get upgrade -y -qq"
 
-- name: Extract SE_TEST.rar
-  shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
-
-
-- name: Set up WineHQ keyring
-  shell: |
-    mkdir -pm755 /etc/apt/keyrings
-    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+# - name: Install required packages
+#   shell: |
+#     apt-get install -y -qq software-properties-common curl gnupg2 wget
+#     apt-get install -y -qq unrar-free
 
 
-- name: Add WineHQ source list
-  shell: |
-    echo "deb http://ftp.us.debian.org/debian bookworm main non-free" > /etc/apt/sources.list.d/non-free.list
-    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+# - name: Download Space Engineers server files
+#   shell: "wget https://setestbucket123.s3.amazonaws.com/SE_TEST.rar -O /tmp/SE_TEST.rar"
+
+# - name: Extract SE_TEST.rar
+#   shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
 
 
-- name: Update apt repositories after adding WineHQ sources
-  shell: "apt-get update -qq"
+# - name: Set up WineHQ keyring
+#   shell: |
+#     mkdir -pm755 /etc/apt/keyrings
+#     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 
 
-- name: Accept Steam terms
-  shell: "echo steam steam/question select 'I AGREE' | debconf-set-selections"
-
-- name: Accept Steam license
-  shell: "echo steam steam/license note '' | debconf-set-selections"
-
-- name: Install Wine and Steam dependencies
-  shell: |
-    apt-get install -qq -y libfaudio0:i386 libfaudio0
-    apt-get install -y fontconfig
-    apt-get install -qq -y --install-recommends \
-      winehq-stable=9.0.0.0~bookworm-1 \
-      wine-stable-i386=9.0.0.0~bookworm-1 \
-      wine-stable-amd64=9.0.0.0~bookworm-1 \
-      wine-stable=9.0.0.0~bookworm-1 \
-      steamcmd \
-      xvfb \
-      cabextract
+# - name: Add WineHQ source list
+#   shell: |
+#     echo "deb http://ftp.us.debian.org/debian bookworm main non-free" > /etc/apt/sources.list.d/non-free.list
+#     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 
 
-- name: Download winetricks script
-  shell: "curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks"
+# - name: Update apt repositories after adding WineHQ sources
+#   shell: "apt-get update -qq"
 
 
-- name: Set the correct permissions for winetricks
-  shell: "chmod +x /usr/local/bin/winetricks"
+# - name: Accept Steam terms
+#   shell: "echo steam steam/question select 'I AGREE' | debconf-set-selections"
+
+# - name: Accept Steam license
+#   shell: "echo steam steam/license note '' | debconf-set-selections"
+
+# - name: Install Wine and Steam dependencies
+#   shell: |
+#     apt-get install -qq -y libfaudio0:i386 libfaudio0
+#     apt-get install -y fontconfig
+#     apt-get install -qq -y --install-recommends \
+#       winehq-stable=9.0.0.0~bookworm-1 \
+#       wine-stable-i386=9.0.0.0~bookworm-1 \
+#       wine-stable-amd64=9.0.0.0~bookworm-1 \
+#       wine-stable=9.0.0.0~bookworm-1 \
+#       steamcmd \
+#       xvfb \
+#       cabextract
 
 
-- name: Run Wine setup and configure for Space Engineers
-  shell: |
-    Xvfb :5 -screen 0 1024x768x16 &
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019
-    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
-  async: 600
-  poll: 0
+# - name: Download winetricks script
+#   shell: "curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks"
 
-- name: Download DpaceEngeneers dedicated server app
+
+# - name: Set the correct permissions for winetricks
+#   shell: "chmod +x /usr/local/bin/winetricks"
+
+
+# - name: Run Wine setup and configure for Space Engineers
+#   shell: |
+#     Xvfb :5 -screen 0 1024x768x16 &
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019
+#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
+#   async: 600
+#   poll: 0
+
+- name: Download SpaceEngeneers dedicated server app
   shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
   async: 600
   poll: 0
