@@ -92,7 +92,9 @@
 
 - name: Move 298740 to SpaceEngineersDedicated
   shell: |
-    mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated
+    shopt -s dotglob
+    mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/
+    shopt -u dotglob
 
 - name: Remove steamapps
   shell: |
