@@ -1,0 +1,34 @@
+- name: Set configuration paths
+  vars:
+    CONFIG_PATH: "{{ config_dir }}"
+    PLUGIN_DIR: "{{ plugin_dir }}"
+    GAME_DIR: "{{ game_dir }}"
+    INSTANCES_DIR: "{{ instance_dir }}"
+    INSTANCE_NAME: "{{ instance_name }}"
+
+- name: Fetch current IP address
+  shell: curl -s https://ipinfo.io/ip
+  register: current_ip
+
+- name: Update IP in configuration file
+  shell: |
+    sed -i "s=<IP>.*</IP>=<IP>{{ current_ip.stdout }}</IP>=g" {{ CONFIG_PATH }}
+
+- name: Count plugins in plugin directory
+  shell: ls -1 "{{ PLUGIN_DIR }}"/*.dll | wc -l
+  register: plugin_count
+
+- name: Format plugins into XML
+  shell: |
+    if [ "{{ plugin_count.stdout }}" -gt "0" ]; then
+      PLUGINS_STRING="<Plugins>$(ls -1 {{ PLUGIN_DIR }}/*.dll | \
+      sed -E \"s=(.+\\.dll)=<string>\\1</string>=g\" | \
+      tr -d \"\\n\" )</Plugins>"
+    else
+      PLUGINS_STRING="<Plugins />"
+    fi
+    echo "$PLUGINS_STRING"
+  register: plugins_string
+
+- name: Remove old log files
+  shell: rm {{ INSTANCES_DIR }}/{{ INSTANCE_NAME }}/*.log
