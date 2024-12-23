@@ -15,7 +15,10 @@ on:
         description: 'Choose EC2 instance type'
         required: true
         default: 't2.micro'
-        type: string
+        type: choice
+        options:
+          - t2.micro
+          - t3.xlarge
 
 env:
   EC2_NAME: SpaceEngineersServer
