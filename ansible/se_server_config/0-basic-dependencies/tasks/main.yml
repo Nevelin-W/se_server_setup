@@ -90,10 +90,10 @@
   async: 600
   poll: 0
 
-# - name: Copy 298740 to SpaceEngineersDedicated
-#   shell: |
-#     cp -r /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740 /appdata/space-engineers/SpaceEngineersDedicated/
+- name: Move 298740 to SpaceEngineersDedicated
+  shell: |
+    mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated
 
-# - name: Remove steamapps
-#   shell: |
-#     rm -rf /appdata/space-engineers/SpaceEngineersDedicated/steamapps
+- name: Remove steamapps
+  shell: |
+    rm -r /appdata/space-engineers/SpaceEngineersDedicated/steamapps
