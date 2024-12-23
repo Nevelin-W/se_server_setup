@@ -15,8 +15,8 @@
   shell: |
     if [ "{{ plugin_count.stdout }}" -gt "0" ]; then
       PLUGINS_STRING="<Plugins>$(ls -1 {{ plugin_dir }}/*.dll | \
-      sed -E \"s=(.+\\.dll)=<string>\\1</string>=g\" | \
-      tr -d \"\\n\" )</Plugins>"
+      sed -E 's=(.+\.dll)=<string>\\1</string>=g' | \
+      tr -d '\\n' )</Plugins>"
     else
       PLUGINS_STRING="<Plugins />"
     fi
