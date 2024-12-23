@@ -93,9 +93,7 @@
 - name: Move content from downloading to SpaceEngineersDedicated
   shell: |
     mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/
-  when: ansible_facts['ansible_pid'] is defined
 
 - name: Remove all other files from SpaceEngineersDedicated except for the desired content
   shell: |
     find /appdata/space-engineers/SpaceEngineersDedicated/ -mindepth 1 ! -path "/appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740" -exec rm -rf {} +
-  when: ansible_facts['ansible_pid'] is defined
