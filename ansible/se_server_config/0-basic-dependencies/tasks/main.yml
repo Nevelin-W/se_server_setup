@@ -90,10 +90,10 @@
   async: 600
   poll: 0
 
-- name: Move content from downloading to SpaceEngineersDedicated
-  shell: |
-    mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/
+# - name: Copy 298740 to SpaceEngineersDedicated
+#   shell: |
+#     cp -r /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740 /appdata/space-engineers/SpaceEngineersDedicated/
 
-- name: Remove all other files from SpaceEngineersDedicated except for the desired content
-  shell: |
-    find /appdata/space-engineers/SpaceEngineersDedicated/ -mindepth 1 ! -path "/appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740" -exec rm -rf {} +
+# - name: Remove steamapps
+#   shell: |
+#     rm -rf /appdata/space-engineers/SpaceEngineersDedicated/steamapps
