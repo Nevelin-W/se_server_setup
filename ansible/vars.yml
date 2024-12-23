@@ -19,6 +19,7 @@ instance_dir: '{{ home_dir }}/instances'
 instance_home_dir: '{{ instance_dir }}/{{instance_name}}'
 game_dir: '{{ home_dir }}/SpaceEngineersDedicated'
 steamcmd_dir: '{{ home_dir }}/steamcmd'
+config_dir: '{{ instance_home_dir }}/SpaceEngineers-Dedicated.cfg'
 
 
 
