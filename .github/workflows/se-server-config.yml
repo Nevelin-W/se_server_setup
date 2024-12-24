@@ -60,9 +60,9 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
         chmod 400 $GITHUB_WORKSPACE/ansible/se_server_ec2_key.pem
 
-    - name: Update Inventory File with EC2_PUBLIC_IP
-      run: |
-        echo "${{ env.EC2_PUBLIC_IP }}" >> $GITHUB_WORKSPACE/ansible/inventory/se_server
+    # - name: Update Inventory File with EC2_PUBLIC_IP
+    #   run: |
+    #     echo "${{ env.EC2_PUBLIC_IP }}" >> $GITHUB_WORKSPACE/ansible/inventory/se_server
 
     - name: Run Docker Container and Execute Ansible Playbook
       run: |
