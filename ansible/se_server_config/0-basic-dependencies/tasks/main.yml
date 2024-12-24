@@ -1,4 +1,3 @@
-
 # - name: Add environment variables to ~/.bashrc
 #   blockinfile:
 #     path: "{{ ansible_env.HOME }}/.bashrc"
@@ -18,6 +17,15 @@
 #       export CONFIG_PATH="/appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg"
 #       export CURRENT_IP=$(curl -s https://ipinfo.io/ip)
 #   become: yes
+
+# - name: Check that environment variables were added to ~/.bashrc
+#   shell: |
+#     grep -q "Space Engineers server variables" {{ ansible_env.HOME }}/.bashrc && echo "Variables are set" || echo "Variables not set"
+#   register: check_result
+
+# - name: Display verification result
+#   debug:
+#     msg: "{{ check_result.stdout }}"
 
 - name: Set environment variable for non-interactive apt
   shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
