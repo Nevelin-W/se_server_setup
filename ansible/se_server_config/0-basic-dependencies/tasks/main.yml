@@ -88,12 +88,12 @@
 - name: Download SpaceEngeneers dedicated server app
   shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
   async: 600
-  poll: 0
+  poll: 60
 
-- name: Move 298740 to SpaceEngineersDedicated
-  shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
+# - name: Move 298740 to SpaceEngineersDedicated
+#   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
 
 
-- name: Remove steamapps
-  shell: |
-    rm -r /appdata/space-engineers/SpaceEngineersDedicated/steamapps
+# - name: Remove steamapps
+#   shell: |
+#     rm -r /appdata/space-engineers/SpaceEngineersDedicated/steamapps
