@@ -90,6 +90,34 @@
   async: 600
   poll: 60
 
+
+- name: Fetch current IP address
+  shell: curl -s https://ipinfo.io/ip
+  register: current_ip
+
+- name: Update IP in configuration file
+  shell: |
+    sed -i "s=<IP>.*</IP>=<IP>{{ current_ip.stdout }}</IP>=g" {{ config_dir }}
+
+- name: Count plugins in plugin directory
+  shell: ls -1 "{{ plugin_dir }}"/*.dll | wc -l
+  register: plugin_count
+
+- name: Format plugins into XML
+  shell: |
+    if [ "{{ plugin_count.stdout }}" -gt "0" ]; then
+      PLUGINS_STRING="<Plugins>$(ls -1 {{ plugin_dir }}/*.dll | \
+      sed -E 's=(.+\.dll)=<string>\\1</string>=g' | \
+      tr -d '\\n' )</Plugins>"
+    else
+      PLUGINS_STRING="<Plugins />"
+    fi
+    echo "$PLUGINS_STRING"
+  register: plugins_string
+
+- name: Remove old log files
+  shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
+
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
 
