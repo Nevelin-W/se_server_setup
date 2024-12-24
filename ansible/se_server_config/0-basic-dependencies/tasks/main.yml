@@ -1,3 +1,24 @@
+
+# - name: Add environment variables to ~/.bashrc
+#   blockinfile:
+#     path: "{{ ansible_env.HOME }}/.bashrc"
+#     block: |
+#       # Space Engineers server variables
+#       export DEBIAN_FRONTEND=noninteractive
+#       export WINEBRANCH=stable
+#       export WINEVERSION=9.0.0.0~bookworm-1
+#       export WINEARCH=win64
+#       export WINEDEBUG=-all
+#       export WINEPREFIX=/root/server
+#       export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+#       export INSTANCE_NAME=SE_TEST
+#       export GAME_DIR="/appdata/space-engineers/SpaceEngineersDedicated"
+#       export INSTANCES_DIR="/appdata/space-engineers/instances"
+#       export PLUGIN_DIR="/appdata/space-engineers/plugins"
+#       export CONFIG_PATH="/appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg"
+#       export CURRENT_IP=$(curl -s https://ipinfo.io/ip)
+#   become: yes
+
 - name: Set environment variable for non-interactive apt
   shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
 
