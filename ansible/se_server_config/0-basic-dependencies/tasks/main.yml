@@ -163,7 +163,7 @@
   replace:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
     regexp: "<LoadWorld>.*Saves\\\\{{ world_name.stdout }}.*</LoadWorld>"
-    replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ world_name.stdout }}\\\\Sandbox.sbc</LoadWorld>"
+    replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ world_name.stdout }}</LoadWorld>"
 
 
 # - name: Move 298740 to SpaceEngineersDedicated
