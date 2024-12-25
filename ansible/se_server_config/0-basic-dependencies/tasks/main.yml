@@ -2,7 +2,6 @@
   blockinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     block: |
-      
       # Space Engineers server variables
       DEBIAN_FRONTEND=noninteractive
       export WINEBRANCH=stable
@@ -28,125 +27,127 @@
   debug:
     msg: "{{ check_result.stdout }}"
 
-# - name: Set environment variable for non-interactive apt
-#   shell: "echo 'DEBIAN_FRONTEND=noninteractive' >> /etc/environment"
+- name: Create directories for Space Engineers server
+  shell: |
+    mkdir -p /appdata/space-engineers/plugins
+    mkdir -p /appdata/space-engineers/instances
+    mkdir -p /appdata/space-engineers/instances/SE_TEST
+    mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
+    mkdir -p /appdata/space-engineers/steamcmd
 
-# - name: Create directories for Space Engineers server
-#   shell: |
-#     mkdir -p /appdata/space-engineers/plugins
-#     mkdir -p /appdata/space-engineers/instances
-#     mkdir -p /appdata/space-engineers/instances/SE_TEST
-#     mkdir -p /appdata/space-engineers/SpaceEngineersDedicated
-#     mkdir -p /appdata/space-engineers/steamcmd
-
-# - name: Add i386 architecture
-#   shell: "dpkg --add-architecture i386"
+- name: Add i386 architecture
+  shell: "dpkg --add-architecture i386"
 
 
-# - name: Update apt repositories
-#   shell: "apt-get -qq -y update && apt-get upgrade -y -qq"
+- name: Update apt repositories
+  shell: "apt-get -qq -y update && apt-get upgrade -y -qq"
 
-# - name: Install required packages
-#   shell: |
-#     apt-get install -y -qq software-properties-common curl gnupg2 wget
-#     apt-get install -y -qq unrar-free
-
-
-# - name: Download Space Engineers server files
-#   shell: "wget https://setestbucket123.s3.amazonaws.com/SE_TEST.rar -O /tmp/SE_TEST.rar"
-
-# - name: Extract SE_TEST.rar
-#   shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
+- name: Install required packages
+  shell: |
+    apt-get install -y -qq software-properties-common curl gnupg2 wget
+    apt-get install -y -qq unrar-free
 
 
-# - name: Set up WineHQ keyring
-#   shell: |
-#     mkdir -pm755 /etc/apt/keyrings
-#     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+- name: Download Space Engineers server files
+  shell: "wget https://setestbucket123.s3.amazonaws.com/SE_TEST.rar -O /tmp/SE_TEST.rar"
+
+- name: Extract SE_TEST.rar
+  shell: "unrar x /tmp/SE_TEST.rar /appdata/space-engineers/instances/SE_TEST"
 
 
-# - name: Add WineHQ source list
-#   shell: |
-#     echo "deb http://ftp.us.debian.org/debian bookworm main non-free" > /etc/apt/sources.list.d/non-free.list
-#     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+- name: Set up WineHQ keyring
+  shell: |
+    mkdir -pm755 /etc/apt/keyrings
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 
 
-# - name: Update apt repositories after adding WineHQ sources
-#   shell: "apt-get update -qq"
+- name: Add WineHQ source list
+  shell: |
+    echo "deb http://ftp.us.debian.org/debian bookworm main non-free" > /etc/apt/sources.list.d/non-free.list
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 
 
-# - name: Accept Steam terms
-#   shell: "echo steam steam/question select 'I AGREE' | debconf-set-selections"
-
-# - name: Accept Steam license
-#   shell: "echo steam steam/license note '' | debconf-set-selections"
-
-# - name: Install Wine and Steam dependencies
-#   shell: |
-#     apt-get install -qq -y libfaudio0:i386 libfaudio0
-#     apt-get install -y fontconfig
-#     apt-get install -qq -y --install-recommends \
-#       winehq-stable=9.0.0.0~bookworm-1 \
-#       wine-stable-i386=9.0.0.0~bookworm-1 \
-#       wine-stable-amd64=9.0.0.0~bookworm-1 \
-#       wine-stable=9.0.0.0~bookworm-1 \
-#       steamcmd \
-#       xvfb \
-#       cabextract
+- name: Update apt repositories after adding WineHQ sources
+  shell: "apt-get update -qq"
 
 
-# - name: Download winetricks script
-#   shell: "curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks"
+- name: Accept Steam terms
+  shell: "echo steam steam/question select 'I AGREE' | debconf-set-selections"
+
+- name: Accept Steam license
+  shell: "echo steam steam/license note '' | debconf-set-selections"
+
+- name: Install libfaudio0:i386
+  shell: |
+    apt-get install -qq -y libfaudio0:i386 libfaudio0
+    apt-get install -y fontconfig
+
+- name: Install fontconfig
+  shell: |
+    apt-get install -y fontconfig
+
+- name: Install Wine and Steam dependencies
+  shell: |
+    apt-get install -qq -y --install-recommends \
+      winehq-stable=9.0.0.0~bookworm-1 \
+      wine-stable-i386=9.0.0.0~bookworm-1 \
+      wine-stable-amd64=9.0.0.0~bookworm-1 \
+      wine-stable=9.0.0.0~bookworm-1 \
+      steamcmd \
+      xvfb \
+      cabextract
 
 
-# - name: Set the correct permissions for winetricks
-#   shell: "chmod +x /usr/local/bin/winetricks"
+- name: Download winetricks script
+  shell: | 
+    curl -L https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks > /usr/local/bin/winetricks
+    chmod +x /usr/local/bin/winetricks
 
 
-# - name: Run Wine setup and configure for Space Engineers
-#   shell: |
-#     Xvfb :5 -screen 0 1024x768x16 &
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019
-#     env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
-#   async: 600
-#   poll: 60
+- name: Run Wine setup and configure for Space Engineers
+  shell: |
+    Xvfb :5 -screen 0 1024x768x16 &
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server WINEDLLOVERRIDES="mscoree=d" wineboot --init /nogui
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server wine winecfg /v win10
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks corefonts
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server winetricks sound=disabled
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q vcrun2019
+    env WINEARCH=win64 WINEDEBUG=-all WINEPREFIX=/root/server DISPLAY=:5.0 winetricks -q --force dotnet48
+  async: 900
+  poll: 60
 
-# - name: Download SpaceEngeneers dedicated server app
-#   shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
-#   async: 600
-#   poll: 60
+- name: Download SpaceEngeneers dedicated server app
+  shell: "/usr/games/steamcmd +force_install_dir /appdata/space-engineers/SpaceEngineersDedicated +login anonymous +@sSteamCmdForcePlatformType windows +app_update 298740 +quit"
+  async: 600
+  poll: 60
 
 
-# - name: Fetch current IP address
-#   shell: curl -s https://ipinfo.io/ip
-#   register: current_ip
+- name: Fetch current IP address
+  shell: curl -s https://ipinfo.io/ip
+  register: current_ip
 
-# - name: Update IP in configuration file
-#   shell: |
-#     sed -i "s=<IP>.*</IP>=<IP>{{ current_ip.stdout }}</IP>=g" {{ config_dir }}
+- name: Update IP in configuration file
+  shell: |
+    sed -i "s=<IP>.*</IP>=<IP>{{ current_ip.stdout }}</IP>=g" {{ config_dir }}
 
-# - name: Count plugins in plugin directory
-#   shell: ls -1 "{{ plugin_dir }}"/*.dll | wc -l
-#   register: plugin_count
+- name: Count plugins in plugin directory
+  shell: ls -1 "{{ plugin_dir }}"/*.dll | wc -l
+  register: plugin_count
 
-# - name: Format plugins into XML
-#   shell: |
-#     if [ "{{ plugin_count.stdout }}" -gt "0" ]; then
-#       PLUGINS_STRING="<Plugins>$(ls -1 {{ plugin_dir }}/*.dll | \
-#       sed -E 's=(.+\.dll)=<string>\\1</string>=g' | \
-#       tr -d '\\n' )</Plugins>"
-#     else
-#       PLUGINS_STRING="<Plugins />"
-#     fi
-#     echo "$PLUGINS_STRING"
-#   register: plugins_string
+- name: Format plugins into XML
+  shell: |
+    if [ "{{ plugin_count.stdout }}" -gt "0" ]; then
+      PLUGINS_STRING="<Plugins>$(ls -1 {{ plugin_dir }}/*.dll | \
+      sed -E 's=(.+\.dll)=<string>\\1</string>=g' | \
+      tr -d '\\n' )</Plugins>"
+    else
+      PLUGINS_STRING="<Plugins />"
+    fi
+    echo "$PLUGINS_STRING"
+  register: plugins_string
 
-# - name: Remove old log files
-#   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
+- name: Remove old log files
+  shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
 
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
