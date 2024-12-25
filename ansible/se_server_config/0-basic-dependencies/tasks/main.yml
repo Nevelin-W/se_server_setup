@@ -159,11 +159,15 @@
   debug:
     var: world_name.stdout
 
+- name: Escape backslashes in world name
+  set_fact:
+    escaped_world_name: "{{ world_name.stdout | regex_replace('\\\\', '\\\\\\\\') }}"
+
 - name: Replace LoadWorld path in .cfg
   replace:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    regexp: '<LoadWorld>.*Saves\\\\{{ world_name.stdout }}.*</LoadWorld>'
-    replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ world_name.stdout }}</LoadWorld>"
+    regexp: '<LoadWorld>.*Saves\\\\{{ escaped_world_name }}.*</LoadWorld>'
+    replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ escaped_world_name }}</LoadWorld>"
 
 
 # - name: Move 298740 to SpaceEngineersDedicated
