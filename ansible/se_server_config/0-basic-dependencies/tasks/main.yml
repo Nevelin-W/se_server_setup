@@ -152,8 +152,8 @@
 - name: Replace LoadWorld path in .cfg
   lineinfile:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    regexp: 'C:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST'
-    line: 'Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST'
+    regexp: '<LoadWorld>C:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST'
+    line: '<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST'
     backrefs: yes
 
 # - name: Move 298740 to SpaceEngineersDedicated
