@@ -167,6 +167,7 @@
     sed -E -i "s|<LoadWorld>.*?</LoadWorld>|<LoadWorld>${SAVE_PATH}</LoadWorld>|g" /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
 
 
+
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
 
