@@ -182,7 +182,6 @@
   shell: |
     sed -E -i "s=<LoadWorld>.*Saves\\\\{{ escaped_world_name }}.*</LoadWorld>=<LoadWorld>{{ SAVE_PATH }}</LoadWorld>=g" /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
   register: replace_output
-  notify: Reload Server  # Optional, you can notify or take further action
 
 # Optional: Debug the result of the sed command
 - name: Debug sed command output
