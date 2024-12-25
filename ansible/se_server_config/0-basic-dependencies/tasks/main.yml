@@ -151,7 +151,7 @@
 
 - name: Extract the world name from the LoadWorld tag
   shell: |
-    grep -oP '(?<=Saves\\).*(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
+    grep -oP '(?<=Saves\\).*?(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
   register: world_name
   ignore_errors: yes  # In case the pattern doesn't match
 
@@ -162,7 +162,7 @@
 - name: Replace LoadWorld path in .cfg
   replace:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    regexp: "<LoadWorld>.*Saves\\\\{{ world_name.stdout }}.*</LoadWorld>"
+    regexp: '<LoadWorld>.*Saves\\\\{{ world_name.stdout }}.*</LoadWorld>'
     replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ world_name.stdout }}</LoadWorld>"
 
 
