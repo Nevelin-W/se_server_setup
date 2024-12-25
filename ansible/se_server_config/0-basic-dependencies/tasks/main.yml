@@ -150,7 +150,7 @@
 #   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
 
 - name: Update LoadWorld path in .cfg
-  shell: "sed -i 's|C:\\ProgramData\\SpaceEngineersDedicated\\SE_TEST|Z:\\appdata\\space-engineers\\instances\\SE_TEST|g' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg"
+  shell: sed -i 's|C:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST|Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST|g' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
 
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
