@@ -149,11 +149,22 @@
 # - name: Remove old log files
 #   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
 
+- name: Extract the world name from the LoadWorld tag
+  shell: |
+    grep -oP '(?<=Saves\\).*(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
+  register: world_name
+  ignore_errors: yes  # In case the pattern doesn't match
+
+- name: Debug the extracted world name
+  debug:
+    var: world_name.stdout
+
 - name: Replace LoadWorld path in .cfg
   replace:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    regexp: 'c:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST'
-    replace: 'z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST'
+    regexp: "<LoadWorld>.*Saves\\\\{{ world_name.stdout }}.*</LoadWorld>"
+    replace: "<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ world_name.stdout }}\\\\Sandbox.sbc</LoadWorld>"
+
 
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
