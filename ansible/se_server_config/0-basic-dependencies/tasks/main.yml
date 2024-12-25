@@ -2,6 +2,7 @@
   blockinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     block: |
+      
       # Space Engineers server variables
       DEBIAN_FRONTEND=noninteractive
       export WINEBRANCH=stable
