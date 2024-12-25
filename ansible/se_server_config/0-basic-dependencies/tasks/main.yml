@@ -151,9 +151,20 @@
 
 - name: Replace LoadWorld path in .cfg
   shell: |
-    CURRENT_WORLDNAME=grep -oP '(?<=Saves\\).*?(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\${CURRENT_WORLDNAME}";
-    sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
+    # Extract the world name from the <LoadWorld> tag, looking specifically after 'Saves\'
+    CURRENT_WORLDNAME=$(grep -oP '(?<=Saves\\).*?(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg)
+
+    # Check if the world name extraction was successful
+    if [ -z "$CURRENT_WORLDNAME" ]; then
+      echo "Failed to extract world name"
+      exit 1
+    fi
+
+    # Define the new save path
+    SAVE_PATH="Z:\\appdata\\space-engineers\\instances\\SE_TEST\\Saves\\${CURRENT_WORLDNAME}"
+
+    # Replace the old <LoadWorld> path with the new one in the configuration file
+    sed -E -i "s|<LoadWorld>.*?</LoadWorld>|<LoadWorld>${SAVE_PATH}</LoadWorld>|g" /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
 
 
 # - name: Move 298740 to SpaceEngineersDedicated
