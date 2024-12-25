@@ -150,11 +150,10 @@
 #   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
 
 - name: Replace LoadWorld path in .cfg
-  lineinfile:
+  replace:
     path: /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-    regexp: '<LoadWorld>C:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST'
-    line: '<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST'
-    backrefs: yes
+    regexp: 'C:\\\\ProgramData\\\\SpaceEngineersDedicated\\\\SE_TEST'
+    replace: 'Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST'
 
 # - name: Move 298740 to SpaceEngineersDedicated
 #   shell: "source ~/.bashrc; mv /appdata/space-engineers/SpaceEngineersDedicated/steamapps/downloading/298740/* /appdata/space-engineers/SpaceEngineersDedicated/"
