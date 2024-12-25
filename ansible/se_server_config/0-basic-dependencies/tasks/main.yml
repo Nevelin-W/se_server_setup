@@ -149,44 +149,11 @@
 # - name: Remove old log files
 #   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
 
-
-# Step 1: Extract the world name from the LoadWorld tag using grep
-- name: Extract the world name from the LoadWorld tag
-  shell: |
-    grep -oP '(?<=Saves\\).*?(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-  register: world_name
-  ignore_errors: yes
-
-# Step 2: Debug the extracted world name (optional)
-- name: Debug the extracted world name
-  debug:
-    var: world_name.stdout
-
-# Step 3: Escape backslashes in the extracted world name
-- name: Escape backslashes in world name
-  set_fact:
-    escaped_world_name: "{{ world_name.stdout | regex_replace('\\\\', '\\\\\\\\') }}"
-
-# Step 4: Debug the escaped world name
-- name: Debug escaped world name
-  debug:
-    var: escaped_world_name
-
-# Step 5: Set the SAVE_PATH variable for the new path
-- name: Set the SAVE_PATH variable
-  set_fact:
-    SAVE_PATH: "Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\\\{{ escaped_world_name }}"
-
-# Step 6: Replace LoadWorld path in the .cfg using sed
 - name: Replace LoadWorld path in .cfg
   shell: |
-    sed -E -i "s=<LoadWorld>.*Saves\\\\{{ escaped_world_name }}.*</LoadWorld>=<LoadWorld>{{ SAVE_PATH }}</LoadWorld>=g" /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
-  register: replace_output
-
-# Optional: Debug the result of the sed command
-- name: Debug sed command output
-  debug:
-    var: replace_output.stdout
+    CURRENT_WORLDNAME=grep -oP '(?<=Saves\\).*?(?=</LoadWorld>)' /appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg
+    SAVE_PATH="Z:\\\\appdata\\\\space-engineers\\\\instances\\\\${INSTANCE_NAME}\\\\Saves\\\\${CURRENT_WORLDNAME}";
+    sed -E -i "s=<LoadWorld />|<LoadWorld.*LoadWorld>=<LoadWorld>${SAVE_PATH}</LoadWorld>=g" ${CONFIG_PATH}
 
 
 # - name: Move 298740 to SpaceEngineersDedicated
