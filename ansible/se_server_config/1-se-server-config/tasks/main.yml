@@ -1,4 +1,3 @@
-
 - name: Fetch current IP address
   shell: curl -s https://ipinfo.io/ip
   register: current_ip
@@ -25,3 +24,25 @@
 
 - name: Remove old log files
   shell: rm {{ instance_dir }}/{{ instance_name }}/*.log
+
+- name: Replace LoadWorld path in .cfg
+  shell: |
+    #!/bin/bash
+
+    # Define the path to the configuration file
+    CONFIG_FILE="/appdata/space-engineers/instances/SE_TEST/SpaceEngineers-Dedicated.cfg"
+    
+    # Step 1: Extract the WORLD_NAME from the <LoadWorld> string using sed
+    WORLD_NAME=$(sed -n 's|.*Saves\([^<]*\)\Sandbox.sbc.*|\1|p' "$CONFIG_FILE")
+    
+    # Check if the WORLD_NAME was successfully extracted
+    if [ -z "$WORLD_NAME" ]; then
+      echo "WORLD_NAME extraction failed!"
+      exit 1
+    fi
+    
+    NEW_LOADWORLD="<LoadWorld>Z:\\\\appdata\\\\space-engineers\\\\instances\\\\SE_TEST\\\\Saves\\$WORLD_NAME</LoadWorld>"
+
+    sed -i "" "s|<LoadWorld>.*</LoadWorld>|$NEW_LOADWORLD|" "$CONFIG_FILE"
+    
+    echo "Replaced <LoadWorld> with the new path."
